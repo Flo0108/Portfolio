@@ -1,19 +1,87 @@
 // --------------------------
 // Setup
 // --------------------------
+
+
+
+
+
+
+
+
+const pointCanvas = document.getElementById("grid-canvas");
+const ctx = pointCanvas.getContext("2d");
+
+function resizeCanvas() {
+  pointCanvas.width = window.innerWidth;
+  pointCanvas.height = window.innerHeight;
+}
+resizeCanvas();
+window.addEventListener("resize", resizeCanvas);
+
+// generate a grid of points
+const points = [];
+const spacing = 40;
+for (let x = spacing / 2; x < window.innerWidth; x += spacing) {
+  for (let y = spacing / 2; y < window.innerHeight; y += spacing) {
+    points.push({x, y});
+  }
+}
+
+function drawPoints() {
+  ctx.clearRect(0, 0, pointCanvas.width, pointCanvas.height);
+  const radius = 2;
+  const hideDistance = 200; // pixels around sprite to hide points
+
+  // project each sprite to 2D
+  const spritePositions2D = sprites.map(sprite => {
+    const pos = sprite.position.clone();
+    pos.project(camera);
+    return {
+      x: (pos.x * 0.5 + 0.5) * window.innerWidth,
+      y: (-pos.y * 0.5 + 0.5) * window.innerHeight
+    };
+  });
+
+  ctx.fillStyle = "rgba(0,0,0,0.2)";
+  points.forEach(p => {
+    // check if point is near any sprite
+    const nearSprite = spritePositions2D.some(s => {
+      const dx = s.x - p.x;
+      const dy = s.y - p.y;
+      return Math.sqrt(dx*dx + dy*dy) < hideDistance;
+    });
+
+    if (!nearSprite) {
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, radius, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  });
+}
+
+
+
+
+
+
+
+
 const container = document.getElementById('three-container');
-const renderer = new THREE.WebGLRenderer({ antialias: true });
+const renderer = new THREE.WebGLRenderer({ antialias: true, alpha:true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 container.appendChild(renderer.domElement);
 
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0xffffff);
+scene.background = null;
 
 const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
 camera.position.z = 5;
 
 const controls = new THREE.OrbitControls(camera, renderer.domElement);
-controls.enableDamping = true;
+controls.enableDamping = true;  // smooth rotation
+controls.enableZoom = false;    // prevent zoom
+controls.enablePan = false;     // prevent panning
 
 // Raycaster
 const raycaster = new THREE.Raycaster();
@@ -33,6 +101,10 @@ let autoRotateSpeed = 0.001;
 let userInteracting = false;
 let hoveredSprite = null;
 let activeProject = null;
+
+const spriteLabel = document.getElementById('sprite-label');
+let focusedSprite = null;
+
 
 
 // --------------------------
@@ -134,6 +206,12 @@ const projects = [
     { id: "project07", title: "Hospice", year: "2023", type: "Speculative",
     method: "Computational",
     mainImage: "images/MainProjects/image7.jpg",
+    images: ["images/project03_01.jpg", "images/project03_02.jpg"],
+    text: "A parametric exploration of form evolution through computational constraints."
+  },
+    { id: "project08", title: "Thesis", year: "2023", type: "Speculative",
+    method: "Computational",
+    mainImage: "images/MainProjects/image8.jpg",
     images: ["images/project03_01.jpg", "images/project03_02.jpg"],
     text: "A parametric exploration of form evolution through computational constraints."
   }
@@ -271,9 +349,35 @@ function onClick() {
   }
 }
 
+
+function createTextSprite(text) {
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d');
+
+  canvas.width = 512;
+  canvas.height = 128;
+
+  ctx.fillStyle = 'white';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  ctx.fillStyle = 'black';
+  ctx.font = '40px Arial';
+  ctx.fillText(text, 20, 70);
+
+  const texture = new THREE.CanvasTexture(canvas);
+  const material = new THREE.SpriteMaterial({ map: texture });
+  const sprite = new THREE.Sprite(material);
+
+  sprite.scale.set(2, 0.5, 1);
+  return sprite;
+}
+
+
 // --------------------------
 // Animate
 // --------------------------
+let label3D = null; // persistent 3D label
+
 function animate() {
   requestAnimationFrame(animate);
   controls.update();
@@ -282,11 +386,13 @@ function animate() {
     sphereGroup.rotation.y += autoRotateSpeed;
   }
 
-
   const minScale = 0.1;
   const maxScale = 2;
-  const revealThreshold = 1.3; // when project becomes dominant
+  const revealThreshold = 1.3;
 
+  let dominantSprite = null;
+
+  // --- find dominant sprite ---
   sprites.forEach(sprite => {
     sprite.lookAt(camera.position);
 
@@ -299,25 +405,42 @@ function animate() {
       1
     );
 
-    // Reveal logic
     if (scaleFactor >= revealThreshold && sprite.userData.project) {
-      if (activeProject !== sprite.userData.project) {
-        activeProject = sprite.userData.project;
-
-        const display = document.getElementById('project-display');
-        display.innerHTML = `
-          <h2>${activeProject.title}</h2>
-          <p>${activeProject.year} — ${activeProject.type}</p>
-          <p>${activeProject.method}</p>
-          <p>${activeProject.text}</p>
-        `;
-      }
+      dominantSprite = sprite;
     }
   });
 
-  renderer.render(scene, camera);
-}
+  // --- manage label ---
+  if (dominantSprite) {
+    focusedSprite = dominantSprite;
+    const project = focusedSprite.userData.project;
 
+    // Create label if it doesn't exist yet
+    if (!label3D) {
+      label3D = createTextSprite(project.title);
+      sphereGroup.add(label3D);
+    }
+
+    // Update label position: push slightly outward along radial vector from center
+    const dir = new THREE.Vector3().subVectors(focusedSprite.position, new THREE.Vector3(0,0,0)).normalize();
+    label3D.position.copy(focusedSprite.position).add(dir.multiplyScalar(focusedSprite.scale.x * 1.2));
+
+    // Make label always face camera
+    label3D.lookAt(camera.position);
+
+  } else {
+    focusedSprite = null;
+    if (label3D) {
+      sphereGroup.remove(label3D);
+      label3D = null;
+    }
+  }
+
+  renderer.render(scene, camera);
+
+  // draw 2D points after camera update
+  drawPoints();
+}
 
 // --------------------------
 // Events

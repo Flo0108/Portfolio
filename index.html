@@ -27,8 +27,26 @@
     <p class="subtitle">architecture × computation</p>
   </header>
 
-  <div id="three-container"></div>
+
+  <div id="three-container" style="position: relative; width: 100vw; height: 100vh;">
+    <canvas id="grid-canvas"></canvas>
+    <canvas id="three-canvas"></canvas>
+
+      <div id="sprite-label" style="
+        position: absolute;
+        pointer-events: none;
+        background: rgba(0, 0, 0, 0.8);
+        padding: 4px 6px;
+        border-radius: 4px;
+        font-family: sans-serif;
+        font-size: 40px;
+      "></div>
+
+  </div>
   <div id="project-display" class="project-display"></div>
+
+
+
 
 
 <div class="tooltip" id="tooltip"></div>
