@@ -42,14 +42,55 @@ const projects = [
   { id: "project01", title: "Climate Center", year: "2025", type: "Speculative",
     method: "Parametric System",
     mainImage: "images/MainProjects/image1.jpg",
-    images: [ "images/MoCap/natalia_anna_flo_image01_ws_22.jpg"
+    images: [ "images/ClimateCenter/image0.jpg",
+              "images/ClimateCenter/image1.jpg",
+              "images/ClimateCenter/image2.jpg",
+              "images/ClimateCenter/image3.jpg",
+              "images/ClimateCenter/image4.jpg",
+              "images/ClimateCenter/image5.jpg",
+              "images/ClimateCenter/image6.jpg",
+              "images/ClimateCenter/image7.jpg",
+              "images/ClimateCenter/image8.jpg",
+              "images/ClimateCenter/image9.jpg",
+              "images/ClimateCenter/image10.jpg",
+              "images/ClimateCenter/image11.jpg",
+              "images/ClimateCenter/image12.jpg",
+              "images/ClimateCenter/image13.jpg",
+              "images/ClimateCenter/image14.jpg",
+              "images/ClimateCenter/image15.jpg",
+              "images/ClimateCenter/image16.jpg",
+              "images/ClimateCenter/image17.jpg",
+              "images/ClimateCenter/image18.jpg",
+              "images/ClimateCenter/image19.jpg",
+              "images/ClimateCenter/image20.jpg"
             ],
     text: "Investigation of spatial negotiation between material constraints and computational control systems."
   },
   { id: "project02", title: "Drone Port", year: "2024", type: "Built",
     method: "Research-Based",
     mainImage: "images/MainProjects/image2.jpg",
-    images: ["images/project02_01.jpg"],
+    images: [ "images/DronePort/image0.jpg",
+              "images/DronePort/image1.jpg",
+              "images/DronePort/image2.jpg",
+              "images/DronePort/image3.jpg",
+              "images/DronePort/image4.jpg",
+              "images/DronePort/image5.jpg",
+              "images/DronePort/image6.jpg",
+              "images/DronePort/image7.jpg",
+              "images/DronePort/image8.jpg",
+              "images/DronePort/image9.jpg",
+              "images/DronePort/image10.jpg",
+              "images/DronePort/image11.jpg",
+              "images/DronePort/image12.jpg",
+              "images/DronePort/image13.jpg",
+              "images/DronePort/image14.jpg",
+              "images/DronePort/image15.jpg",
+              "images/DronePort/image16.jpg",
+              "images/DronePort/image17.jpg",
+              "images/DronePort/image18.jpg",
+              "images/DronePort/image19.jpg",
+              "images/DronePort/image20.jpg"
+            ],
     text: "Exploring material interactions in a built environment."
   },
   { id: "project03", title: "Concert House", year: "2023", type: "Speculative",
@@ -239,7 +280,7 @@ function animate() {
 
   const minScale = 0.1;
   const maxScale = 2;
-  const revealThreshold = 1.05; // when project becomes dominant
+  const revealThreshold = 1.3; // when project becomes dominant
 
   sprites.forEach(sprite => {
     sprite.lookAt(camera.position);
