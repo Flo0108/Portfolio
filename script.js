@@ -278,6 +278,11 @@ function animate() {
   requestAnimationFrame(animate);
   controls.update();
 
+  if (!userInteracting) {
+    sphereGroup.rotation.y += autoRotateSpeed;
+  }
+
+
   const minScale = 0.1;
   const maxScale = 2;
   const revealThreshold = 1.3; // when project becomes dominant
@@ -328,3 +333,5 @@ loadMainSphere();
 animate();
 
 window.addEventListener('click', onClick);
+controls.addEventListener('start', () => { userInteracting = true; });
+controls.addEventListener('end', () => { userInteracting = false; });
