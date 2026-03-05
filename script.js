@@ -162,7 +162,7 @@ const projects = [
 ];
 
 // --------------------------
-// Functions
+// Main Load Functions
 // --------------------------
 function loadSphereImages(urls) {
   // Clear old sprites
@@ -195,7 +195,6 @@ function loadSphereImages(urls) {
   });
 }
 
-
 function positionOnSphere(index, total, radius) {
   const phi = Math.acos(-1 + (2 * index) / total);
   const theta = Math.sqrt(total * Math.PI) * phi;
@@ -214,8 +213,6 @@ function createSprite(texture, height = 1) {
   sprite.originalScale = sprite.scale.clone();
   return sprite;
 }
-
-
 
 function loadMainSphere() {
   sprites.forEach(s => sphereGroup.remove(s));
@@ -365,7 +362,6 @@ function drawSpriteName(dominantSprite) {
   let closestSpriteRect = null;
   let minCameraDistance = Infinity;
 
-  console.log("DRAWING TEXTS")
 
   sprites.forEach((sprite, i) => {
 
@@ -385,8 +381,6 @@ function drawSpriteName(dominantSprite) {
     // Use progress to fade in text
     const sprite = sprites.find(s => s.userData.project === r.project);
     const alpha = sprite ? sprite.userData.progress : 0;
-
-    console.log(r.project.title)
 
     overlayctx.globalAlpha = alpha; // fade text in/out
     const x = r.right + 50;
@@ -482,13 +476,13 @@ function onMouseMove(event) {
 }
 
 function onClick() {
+  console.log
   raycaster.setFromCamera(mouse, camera);
   const intersects = raycaster.intersectObjects(sprites);
   if (intersects.length > 0) {
     const clicked = intersects[0].object;
     const fullSrc = clicked.material.map.image.src;
     const src = fullSrc.substring(fullSrc.indexOf("images/"));
-    alert("Selected: " + clicked.material.map.image.src);
 
 
     // Find the project that owns this image
@@ -572,34 +566,41 @@ function onClick() {
 function animate() {
   requestAnimationFrame(animate);
   controls.update();
+  
 
+  // Instead of rotating the group manually:
   if (!userInteracting) {
-    sphereGroup.rotation.y += autoRotateSpeed;
+      controls.autoRotate = true;       // enable built-in auto-rotate
+      controls.autoRotateSpeed = 0.1;   // adjust speed
+      controls.update();                 // OrbitControls handles rotation + matrices
   }
 
   const minScale = 0.1;
   const maxScale = 2;
   const revealThreshold = 1.3;
 
-  let dominantSprite = null;
 
-  // --- find dominant sprite and set scales ---
+  let dominantSprite = null;
+  let minDistance = Infinity;
+
   sprites.forEach(sprite => {
     sprite.lookAt(camera.position);
 
     const distance = camera.position.distanceTo(sprite.position);
     const scaleFactor = THREE.MathUtils.clamp(5 / distance, minScale, maxScale);
 
-    sprite.scale.set(
-      sprite.originalScale.x * scaleFactor,
-      sprite.originalScale.y * scaleFactor,
-      1
-    );
+    sprite.scale.set(sprite.originalScale.x * scaleFactor,
+                    sprite.originalScale.y * scaleFactor,
+                    1);
 
-    if (scaleFactor >= revealThreshold && sprite.userData.project) {
+    const cameraSpacePos = sprite.position.clone().applyMatrix4(camera.matrixWorldInverse);
+    const z = -cameraSpacePos.z; 
+    if (z < minDistance) {
+      minDistance = z;
       dominantSprite = sprite;
     }
   });
+
 
   // --- set grayscale for all sprites except dominant ---
   sprites.forEach(sprite => {
@@ -623,7 +624,6 @@ function animate() {
 
 
 
-
 }
 
 
@@ -640,6 +640,20 @@ function animate() {
 loadMainSphere();
 animate();
 
-window.addEventListener('click', onClick);
-controls.addEventListener('start', () => { userInteracting = true; });
-controls.addEventListener('end', () => { userInteracting = false; });
+let pointerDownTime = 0;
+
+// Record when pointer is pressed
+threeCanvas.addEventListener('pointerdown', (event) => {
+    pointerDownTime = performance.now();
+});
+
+// Trigger click logic on pointer up if duration < 1 second
+threeCanvas.addEventListener('pointerup', (event) => {
+    const duration = performance.now() - pointerDownTime;
+
+    if (duration > 100) return; // ignore long presses
+
+    console.log("Click duration:", duration);
+
+    onClick()
+});
