@@ -1,6 +1,3 @@
-// --------------------------
-// Setup
-// --------------------------
 
 
 
@@ -9,68 +6,14 @@
 
 
 
-const pointCanvas = document.getElementById("grid-canvas");
-const ctx = pointCanvas.getContext("2d");
-
-function resizeCanvas() {
-  pointCanvas.width = window.innerWidth;
-  pointCanvas.height = window.innerHeight;
-}
-resizeCanvas();
-window.addEventListener("resize", resizeCanvas);
-
-// generate a grid of points
-const points = [];
-const spacing = 40;
-for (let x = spacing / 2; x < window.innerWidth; x += spacing) {
-  for (let y = spacing / 2; y < window.innerHeight; y += spacing) {
-    points.push({x, y});
-  }
-}
-
-function drawPoints() {
-  ctx.clearRect(0, 0, pointCanvas.width, pointCanvas.height);
-  const radius = 2;
-  const hideDistance = 200; // pixels around sprite to hide points
-
-  // project each sprite to 2D
-  const spritePositions2D = sprites.map(sprite => {
-    const pos = sprite.position.clone();
-    pos.project(camera);
-    return {
-      x: (pos.x * 0.5 + 0.5) * window.innerWidth,
-      y: (-pos.y * 0.5 + 0.5) * window.innerHeight
-    };
-  });
-
-  ctx.fillStyle = "rgba(0,0,0,0.2)";
-  points.forEach(p => {
-    // check if point is near any sprite
-    const nearSprite = spritePositions2D.some(s => {
-      const dx = s.x - p.x;
-      const dy = s.y - p.y;
-      return Math.sqrt(dx*dx + dy*dy) < hideDistance;
-    });
-
-    if (!nearSprite) {
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, radius, 0, Math.PI * 2);
-      ctx.fill();
-    }
-  });
-}
 
 
 
 
-
-
-
-
-const container = document.getElementById('three-container');
-const renderer = new THREE.WebGLRenderer({ antialias: true, alpha:true });
+const threeCanvas = document.getElementById("three-canvas");
+const renderer = new THREE.WebGLRenderer({ canvas: threeCanvas, antialias: true, alpha: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
-container.appendChild(renderer.domElement);
+
 
 const scene = new THREE.Scene();
 scene.background = null;
@@ -104,6 +47,7 @@ let activeProject = null;
 
 const spriteLabel = document.getElementById('sprite-label');
 let focusedSprite = null;
+
 
 
 
@@ -251,52 +195,292 @@ function loadSphereImages(urls) {
   });
 }
 
+
+function positionOnSphere(index, total, radius) {
+  const phi = Math.acos(-1 + (2 * index) / total);
+  const theta = Math.sqrt(total * Math.PI) * phi;
+  return new THREE.Vector3(
+    radius * Math.cos(theta) * Math.sin(phi),
+    radius * Math.sin(theta) * Math.sin(phi),
+    radius * Math.cos(phi)
+  );
+}
+
+function createSprite(texture, height = 1) {
+  const material = new THREE.SpriteMaterial({ map: texture });
+  const sprite = new THREE.Sprite(material);
+  const aspect = texture.image.width / texture.image.height;
+  sprite.scale.set(height * aspect, height, 1);
+  sprite.originalScale = sprite.scale.clone();
+  return sprite;
+}
+
+
+
 function loadMainSphere() {
   sprites.forEach(s => sphereGroup.remove(s));
-  sprites = [];
+  sprites.length = 0;
 
   projects.forEach((project, i) => {
-    const texture = new THREE.TextureLoader().load(project.mainImage, () => {
-      const material = new THREE.SpriteMaterial({ map: texture });
-      const sprite = new THREE.Sprite(material);
-
-      const aspect = texture.image.width / texture.image.height;
-      const spriteHeight = 1;
-      sprite.scale.set(spriteHeight * aspect, spriteHeight, 1);
-      sprite.originalScale = sprite.scale.clone();
-
-      // Attach project reference
+    new THREE.TextureLoader().load(project.mainImage, texture => {
+      const sprite = createSprite(texture);
       sprite.userData.project = project;
-
-      const phi = Math.acos(-1 + (2 * i) / projects.length);
-      const theta = Math.sqrt(projects.length * Math.PI) * phi;
-
-      sprite.position.set(
-        sphereRadius * Math.cos(theta) * Math.sin(phi),
-        sphereRadius * Math.sin(theta) * Math.sin(phi),
-        sphereRadius * Math.cos(phi)
-      );
-
+      sprite.position.copy(positionOnSphere(i, projects.length, sphereRadius));
       sphereGroup.add(sprite);
       sprites.push(sprite);
     });
   });
 }
 
+
+
+
+
+
+
+
+
+
+// --------------------------
+// DISPLAY
+// --------------------------
+
+// --------------------------
+// 2D-Setup
+// --------------------------
+
+
+const pointCanvas = document.getElementById("grid-canvas");
+const ctx = pointCanvas.getContext("2d");
+
+const points = [];
+const spacing = 40;
+
+function generateGridPoints(width, height) {
+  points.length = 0;
+  for (let x = spacing / 2; x < width; x += spacing) {
+    for (let y = spacing / 2; y < height; y += spacing) {
+      points.push({ x, y });
+    }
+  }
+}
+
+function resizeCanvas() {
+  pointCanvas.width = window.innerWidth;
+  pointCanvas.height = window.innerHeight;
+  generateGridPoints(window.innerWidth, window.innerHeight);
+}
+
+
+function projectSpriteToScreen(sprite) {
+  const rect = overlayCanvas.getBoundingClientRect();
+  const center = new THREE.Vector3();
+  sprite.getWorldPosition(center);
+
+  const camRight = new THREE.Vector3().setFromMatrixColumn(camera.matrixWorld, 0).normalize();
+  const camUp = new THREE.Vector3().setFromMatrixColumn(camera.matrixWorld, 1).normalize();
+
+  const halfW = sprite.scale.x / 2;
+  const halfH = sprite.scale.y / 2;
+
+  const corners = [
+    center.clone().add(camRight.clone().multiplyScalar(-halfW)).add(camUp.clone().multiplyScalar(-halfH)),
+    center.clone().add(camRight.clone().multiplyScalar( halfW)).add(camUp.clone().multiplyScalar(-halfH)),
+    center.clone().add(camRight.clone().multiplyScalar( halfW)).add(camUp.clone().multiplyScalar( halfH)),
+    center.clone().add(camRight.clone().multiplyScalar(-halfW)).add(camUp.clone().multiplyScalar( halfH))
+  ];
+
+  const screen = corners.map(v => {
+    v.project(camera);
+    return { x: (v.x * 0.5 + 0.5) * rect.width, y: (-v.y * 0.5 + 0.5) * rect.height };
+  });
+
+  return {
+    quad: screen,
+    left: Math.min(...screen.map(p => p.x)),
+    right: Math.max(...screen.map(p => p.x)),
+    top: Math.min(...screen.map(p => p.y)),
+    bottom: Math.max(...screen.map(p => p.y)),
+    project: sprite.userData.project
+  };
+}
+
+function drawPoints() {
+  ctx.clearRect(0, 0, pointCanvas.width, pointCanvas.height);
+
+
+  const spriteRects = sprites.map(projectSpriteToScreen);
+
+  // Find the closest sprite along the camera forward direction
+  let closestSpriteRect = null;
+  let minCameraDistance = Infinity;
+
+
+
+  // draw points
+  ctx.fillStyle = "rgba(0,0,0,0.2)";
+  const radius = 2;
+  const offset = 100;
+  points.forEach(p => {
+    const inside = spriteRects.some(r =>
+      p.x + offset > r.left && p.x - offset < r.right &&
+      p.y + offset > r.top  && p.y - offset < r.bottom
+    );
+    if (!inside) {
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, radius, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  });
+}
+
+window.addEventListener("resize", resizeCanvas);
+resizeCanvas();
+
+
+
+
+const overlayCanvas = document.getElementById("overlay-canvas");
+const overlayctx = overlayCanvas.getContext("2d");
+
+
+function resizeOverlayCanvas() {
+  overlayCanvas.width = window.innerWidth;
+  overlayCanvas.height = window.innerHeight;
+}
+
+window.addEventListener("resize", () => {
+  resizeOverlayCanvas();
+  resizeCanvas(); // your existing grid-canvas resize function
+});
+resizeOverlayCanvas();
+
+
+function drawSpriteName(dominantSprite) {
+  overlayctx.clearRect(0, 0, overlayCanvas.width, overlayCanvas.height);
+
+  const spriteRects = sprites.map(projectSpriteToScreen);
+
+  // Find the closest sprite along the camera forward direction
+  let closestSpriteRect = null;
+  let minCameraDistance = Infinity;
+
+  console.log("DRAWING TEXTS")
+
+  sprites.forEach((sprite, i) => {
+
+    if (dominantSprite) {
+      const cameraSpacePos = sprite.position.clone().applyMatrix4(camera.matrixWorldInverse);
+      const distance = -cameraSpacePos.z; // use negative z to get positive depth in front of camera
+      if (distance < minCameraDistance) {
+        minCameraDistance = distance;
+        closestSpriteRect = spriteRects[i];
+      }
+    }
+  });
+
+  if (closestSpriteRect && closestSpriteRect.project) {
+    const r = closestSpriteRect;
+    
+    // Use progress to fade in text
+    const sprite = sprites.find(s => s.userData.project === r.project);
+    const alpha = sprite ? sprite.userData.progress : 0;
+
+    console.log(r.project.title)
+
+    overlayctx.globalAlpha = alpha; // fade text in/out
+    const x = r.right + 50;
+    const y = r.bottom - 50;
+    overlayctx.font = "24px 'Source Sans Pro', Arial";
+    overlayctx.fillStyle = "black";
+    overlayctx.fillText(r.project.title, x, y);
+    overlayctx.font = "12px 'Source Sans Pro', Arial";
+    overlayctx.fillText(`${r.project.year} — ${r.project.type}`, x, y + 16);
+    overlayctx.globalAlpha = 1;
+  }
+
+}
+
+
+
+
+
+
+
+
+// --------------------------
+// Image Color-Setup
+// --------------------------
+
+
+
+
+
+function prepareGrayscale(sprite) {
+  if (sprite.userData.grayTexture) return; // already done
+
+  const texture = sprite.material.map;
+  const image = texture.image;
+
+  const canvas = document.createElement('canvas');
+  canvas.width = image.width;
+  canvas.height = image.height;
+  const ctx = canvas.getContext('2d');
+
+  ctx.drawImage(image, 0, 0);
+
+  const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+  const data = imgData.data;
+
+  for (let i = 0; i < data.length; i += 4) {
+    const gray = 0.21 * data[i] + 0.72 * data[i + 1] + 0.07 * data[i + 2];
+    const adjusted = gray + 60; // brighten slightly
+    data[i] = data[i + 1] = data[i + 2] = Math.min(255, adjusted);
+  }
+
+  ctx.putImageData(imgData, 0, 0);
+
+  const grayTexture = new THREE.Texture(canvas);
+  grayTexture.needsUpdate = true;
+  sprite.userData.grayTexture = grayTexture;
+
+  if (!sprite.userData.originalTexture) {
+    sprite.userData.originalTexture = texture; // store original
+  }
+}
+
+
+function updateSpriteGrayscale(spriteArray, targetScale) {
+  const epsilon = 0.7;
+  spriteArray.forEach(sprite => {
+    prepareGrayscale(sprite); // precompute if needed
+
+    const sx = sprite.scale.x;
+    const sy = sprite.scale.y;
+
+    if (Math.abs(sx - targetScale) < epsilon || Math.abs(sy - targetScale) < epsilon) {
+      sprite.material.map = sprite.userData.grayTexture;
+    } else {
+      sprite.material.map = sprite.userData.originalTexture;
+    }
+    sprite.material.needsUpdate = true;
+  });
+}
+
+
+
+
+
 // --------------------------
 // Interaction
 // --------------------------
 
 function onMouseMove(event) {
-  const rect = container.getBoundingClientRect();
+  const rect = threeCanvas.getBoundingClientRect();
   mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
   mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
 }
 
-
-// --------------------------
-// Interaction
-// --------------------------
 function onClick() {
   raycaster.setFromCamera(mouse, camera);
   const intersects = raycaster.intersectObjects(sprites);
@@ -350,33 +534,40 @@ function onClick() {
 }
 
 
-function createTextSprite(text) {
-  const canvas = document.createElement('canvas');
-  const ctx = canvas.getContext('2d');
 
-  canvas.width = 512;
-  canvas.height = 128;
 
-  ctx.fillStyle = 'white';
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-  ctx.fillStyle = 'black';
-  ctx.font = '40px Arial';
-  ctx.fillText(text, 20, 70);
 
-  const texture = new THREE.CanvasTexture(canvas);
-  const material = new THREE.SpriteMaterial({ map: texture });
-  const sprite = new THREE.Sprite(material);
 
-  sprite.scale.set(2, 0.5, 1);
-  return sprite;
-}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 // --------------------------
 // Animate
 // --------------------------
-let label3D = null; // persistent 3D label
 
 function animate() {
   requestAnimationFrame(animate);
@@ -392,7 +583,7 @@ function animate() {
 
   let dominantSprite = null;
 
-  // --- find dominant sprite ---
+  // --- find dominant sprite and set scales ---
   sprites.forEach(sprite => {
     sprite.lookAt(camera.position);
 
@@ -410,37 +601,31 @@ function animate() {
     }
   });
 
-  // --- manage label ---
-  if (dominantSprite) {
-    focusedSprite = dominantSprite;
-    const project = focusedSprite.userData.project;
+  // --- set grayscale for all sprites except dominant ---
+  sprites.forEach(sprite => {
+    prepareGrayscale(sprite); // only precomputes once
 
-    // Create label if it doesn't exist yet
-    if (!label3D) {
-      label3D = createTextSprite(project.title);
-      sphereGroup.add(label3D);
+    if (sprite === dominantSprite) {
+      sprite.material.map = sprite.userData.originalTexture; // full color
+    } else {
+      sprite.material.map = sprite.userData.grayTexture;     // grayscale
     }
+    sprite.material.needsUpdate = true;
+  });
 
-    // Update label position: push slightly outward along radial vector from center
-    const dir = new THREE.Vector3().subVectors(focusedSprite.position, new THREE.Vector3(0,0,0)).normalize();
-    label3D.position.copy(focusedSprite.position).add(dir.multiplyScalar(focusedSprite.scale.x * 1.2));
-
-    // Make label always face camera
-    label3D.lookAt(camera.position);
-
-  } else {
-    focusedSprite = null;
-    if (label3D) {
-      sphereGroup.remove(label3D);
-      label3D = null;
-    }
-  }
-
+  // --- render ---
   renderer.render(scene, camera);
 
-  // draw 2D points after camera update
+  // --- draw points / text ---
   drawPoints();
+  drawSpriteName(dominantSprite);
+
+
+
+
+
 }
+
 
 // --------------------------
 // Events
