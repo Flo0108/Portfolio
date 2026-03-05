@@ -227,10 +227,128 @@ canvas {
 }
 
 
+
+/* GENERAL DISPLAY PORTFOLIO PROJECT */
 #project-display {
   padding: 3rem 6vw;
   border-top: 1px solid #ddd;
 }
+
+#project-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 70%; /* half screen */
+  height: 100%;
+  background-color: white;
+  box-shadow: -4px 0 12px rgba(0,0,0,0.3);
+  transform: translateX(100%); /* start offscreen */
+  transition: transform 0.5s ease;
+  overflow-y: auto;
+  z-index: 20;
+  padding: 20px;
+}
+
+#project-panel.active {
+  transform: translateX(0); /* slide in */
+}
+
+#close-project {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 24px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+#project-content img {
+  max-width: 100%;
+  margin-bottom: 10px;
+}
+
+
+
+
+
+
+
+/* MODULES FOR PORTFOLIO PROJECT LAYOUTS */
+.project-module {
+    margin-bottom: 20px;
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.project-module img,
+.project-module video {
+    max-width: 100%;
+    border-radius: 4px;
+}
+
+/* Layout variations */
+.module-image-left {
+    flex-direction: row;
+}
+.module-image-right {
+    flex-direction: row-reverse;
+}
+.module-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 10px;
+}
+.module-text {
+    flex-direction: column;
+}
+
+
+/* Image left / text right */
+.module-image-text {
+    flex-direction: row;
+}
+
+.module-image-text .module-image {
+    flex: 1;
+    min-width: 70%;
+    max-width: 80%;
+}
+
+.module-image-text .module-image img {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 4px;
+}
+
+.module-image-text .module-text {
+    flex: 2;
+    font-size: 1rem;
+    line-height: 1.5;
+}
+
+/* Optional: make responsive for small screens */
+@media (max-width: 768px) {
+    .module-image-text {
+        flex-direction: column;
+    }
+    .module-image-text .module-image {
+        max-width: 100%;
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
 
 
 /* Map container */

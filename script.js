@@ -80,7 +80,18 @@ const projects = [
               "images/ClimateCenter/image19.jpg",
               "images/ClimateCenter/image20.jpg"
             ],
-    text: "Investigation of spatial negotiation between material constraints and computational control systems."
+    text: "Investigation of spatial negotiation between material constraints and computational control systems.",
+    description: "I see what’s happening. The issue isn’t with your showProjectPanel function itself—it’s that the call happens before the textures for the sprites have loaded. Your THREE.TextureLoader().load calls are asynchronous, so the project panel is being requested while the images are still loading, which can prevent layout logic or animations from initializing correctly. Here’s how you can fix it:",
+    modules: [
+      { type: "text", content: "Investigation of spatial negotiation between material constraints and computational control systems." },
+      { type: "image-text", image: "images/MainProjects/image1.jpg", text: "Main view of the project" },
+      { type: "image-grid", images: [
+          "images/ClimateCenter/image0.jpg",
+          "images/ClimateCenter/image1.jpg",
+          "images/ClimateCenter/image2.jpg"
+        ]
+      }
+    ]
   },
   { id: "project02", title: "Drone Port", year: "2024", type: "Built",
     method: "Research-Based",
@@ -107,13 +118,51 @@ const projects = [
               "images/DronePort/image19.jpg",
               "images/DronePort/image20.jpg"
             ],
-    text: "Exploring material interactions in a built environment."
+    text: "Exploring material interactions in a built environment.",
+    description: "I see what’s happening. The issue isn’t with your showProjectPanel function itself—it’s that the call happens before the textures for the sprites have loaded. Your THREE.TextureLoader().load calls are asynchronous, so the project panel is being requested while the images are still loading, which can prevent layout logic or animations from initializing correctly. Here’s how you can fix it:",
+    modules: [
+      { type: "text", content: "Investigation of spatial negotiation between material constraints and computational control systems." },
+      { type: "image-text", image: "images/MainProjects/image1.jpg", text: "Main view of the project" },
+      { type: "image-grid", images: [
+          "images/DronePort/image0.jpg",
+          "images/DronePort/image1.jpg",
+          "images/DronePort/image2.jpg",
+          "images/DronePort/image3.jpg",
+          "images/DronePort/image4.jpg",
+          "images/DronePort/image5.jpg",
+          "images/DronePort/image6.jpg",
+          "images/DronePort/image7.jpg",
+          "images/DronePort/image8.jpg",
+          "images/DronePort/image9.jpg",
+          "images/DronePort/image10.jpg",
+          "images/DronePort/image11.jpg",
+          "images/DronePort/image12.jpg",
+          "images/DronePort/image13.jpg",
+          "images/DronePort/image14.jpg",
+          "images/DronePort/image15.jpg",
+          "images/DronePort/image16.jpg",
+          "images/DronePort/image17.jpg",
+          "images/DronePort/image18.jpg",
+          "images/DronePort/image19.jpg",
+          "images/DronePort/image20.jpg"
+        ]
+      }
+    ]
   },
   { id: "project03", title: "Concert House", year: "2023", type: "Speculative",
     method: "Computational",
     mainImage: "images/MainProjects/image3.jpg",
     images: ["images/project03_01.jpg", "images/project03_02.jpg"],
-    text: "A parametric exploration of form evolution through computational constraints."
+    text: "A parametric exploration of form evolution through computational constraints.",
+    description: "I see what’s happening. The issue isn’t with your showProjectPanel function itself—it’s that the call happens before the textures for the sprites have loaded. Your THREE.TextureLoader().load calls are asynchronous, so the project panel is being requested while the images are still loading, which can prevent layout logic or animations from initializing correctly. Here’s how you can fix it:",
+    modules: [
+      { type: "text", content: "Investigation of spatial negotiation between material constraints and computational control systems." },
+      { type: "image-text", image: "images/MainProjects/image1.jpg", text: "Main view of the project" },
+      { type: "image-grid", images: [
+          "images/project03_01.jpg", "images/project03_02.jpg"
+        ]
+      }
+    ]
   },
   { id: "project04", title: "MoCap Factory", year: "2023", type: "Speculative",
     method: "MoCap Factory",
@@ -130,13 +179,43 @@ const projects = [
               "images/MoCap/natalia_anna_flo_image10_ws_22.jpg",
               "images/MoCap/natalia_anna_flo_image11_ws_22_WG.jpg",
             ],
-    text: "A parametric exploration of form evolution through computational constraints."
+    text: "A parametric exploration of form evolution through computational constraints.",
+    description: "I see what’s happening. The issue isn’t with your showProjectPanel function itself—it’s that the call happens before the textures for the sprites have loaded. Your THREE.TextureLoader().load calls are asynchronous, so the project panel is being requested while the images are still loading, which can prevent layout logic or animations from initializing correctly. Here’s how you can fix it:",
+    modules: [
+      { type: "text", content: "Investigation of spatial negotiation between material constraints and computational control systems." },
+      { type: "image-text", image: "images/MainProjects/image1.jpg", text: "Main view of the project" },
+      { type: "image-grid", images: [
+          "images/MoCap/natalia_anna_flo_image01_ws_22.jpg",
+          "images/MoCap/natalia_anna_flo_image02_ws_22.jpg",
+          "images/MoCap/natalia_anna_flo_image03_ws_22.jpg",
+          "images/MoCap/natalia_anna_flo_image04_ws_22.jpg",
+          "images/MoCap/natalia_anna_flo_image05_ws_22.jpg",
+          "images/MoCap/natalia_anna_flo_image06_ws_22.jpg",
+          "images/MoCap/natalia_anna_flo_image07_ws_22_WG.jpg",
+          "images/MoCap/natalia_anna_flo_image08_ws_22.jpg",
+          "images/MoCap/natalia_anna_flo_image09_ws_22.jpg",
+          "images/MoCap/natalia_anna_flo_image10_ws_22.jpg",
+          "images/MoCap/natalia_anna_flo_image11_ws_22_WG.jpg",
+        ]
+      }
+    ]
   },
   { id: "project05", title: "CGI", year: "2023", type: "Speculative",
     method: "Computational",
     mainImage: "images/MainProjects/image5.jpg",
     images: ["images/project03_01.jpg", "images/project03_02.jpg"],
-    text: "A parametric exploration of form evolution through computational constraints."
+    text: "A parametric exploration of form evolution through computational constraints.",
+    description: "I see what’s happening. The issue isn’t with your showProjectPanel function itself—it’s that the call happens before the textures for the sprites have loaded. Your THREE.TextureLoader().load calls are asynchronous, so the project panel is being requested while the images are still loading, which can prevent layout logic or animations from initializing correctly. Here’s how you can fix it:",
+    modules: [
+      { type: "text", content: "Investigation of spatial negotiation between material constraints and computational control systems." },
+      { type: "image-text", image: "images/MainProjects/image1.jpg", text: "Main view of the project" },
+      { type: "image-grid", images: [
+          "images/ClimateCenter/image0.jpg",
+          "images/ClimateCenter/image1.jpg",
+          "images/ClimateCenter/image2.jpg"
+        ]
+      }
+    ]
   },
   { id: "project06", title: "Google HQ", year: "2023", type: "Speculative",
     method: "Google HQ",
@@ -145,19 +224,52 @@ const projects = [
               "images/Google/image2.jpg",
               "images/Google/image3.jpg"
             ],
-    text: "A parametric exploration of form evolution through computational constraints."
+    text: "A parametric exploration of form evolution through computational constraints.",
+    description: "I see what’s happening. The issue isn’t with your showProjectPanel function itself—it’s that the call happens before the textures for the sprites have loaded. Your THREE.TextureLoader().load calls are asynchronous, so the project panel is being requested while the images are still loading, which can prevent layout logic or animations from initializing correctly. Here’s how you can fix it:",
+    modules: [
+      { type: "text", content: "Investigation of spatial negotiation between material constraints and computational control systems." },
+      { type: "image-text", image: "images/MainProjects/image1.jpg", text: "Main view of the project" },
+      { type: "image-grid", images: [
+          "images/ClimateCenter/image0.jpg",
+          "images/ClimateCenter/image1.jpg",
+          "images/ClimateCenter/image2.jpg"
+        ]
+      }
+    ]
   },
     { id: "project07", title: "Hospice", year: "2023", type: "Speculative",
     method: "Computational",
     mainImage: "images/MainProjects/image7.jpg",
     images: ["images/project03_01.jpg", "images/project03_02.jpg"],
-    text: "A parametric exploration of form evolution through computational constraints."
+    text: "A parametric exploration of form evolution through computational constraints.",
+    description: "I see what’s happening. The issue isn’t with your showProjectPanel function itself—it’s that the call happens before the textures for the sprites have loaded. Your THREE.TextureLoader().load calls are asynchronous, so the project panel is being requested while the images are still loading, which can prevent layout logic or animations from initializing correctly. Here’s how you can fix it:",
+    modules: [
+      { type: "text", content: "Investigation of spatial negotiation between material constraints and computational control systems." },
+      { type: "image-text", image: "images/MainProjects/image1.jpg", text: "Main view of the project" },
+      { type: "image-grid", images: [
+          "images/ClimateCenter/image0.jpg",
+          "images/ClimateCenter/image1.jpg",
+          "images/ClimateCenter/image2.jpg"
+        ]
+      }
+    ]
   },
     { id: "project08", title: "Thesis", year: "2023", type: "Speculative",
     method: "Computational",
     mainImage: "images/MainProjects/image8.jpg",
     images: ["images/project03_01.jpg", "images/project03_02.jpg"],
-    text: "A parametric exploration of form evolution through computational constraints."
+    text: "A parametric exploration of form evolution through computational constraints.",
+    description: "I see what’s happening. The issue isn’t with your showProjectPanel function itself—it’s that the call happens before the textures for the sprites have loaded. Your THREE.TextureLoader().load calls are asynchronous, so the project panel is being requested while the images are still loading, which can prevent layout logic or animations from initializing correctly. Here’s how you can fix it:",
+    modules: [
+      { type: "text", content: "Investigation of spatial negotiation between material constraints and computational control systems." },
+      { type: "image-text", image: "images/MainProjects/image1.jpg", text: "Main view of the project" },
+      { type: "image-grid", images: [
+          "images/ClimateCenter/image0.jpg",
+          "images/ClimateCenter/image1.jpg",
+          "images/ClimateCenter/image2.jpg"
+        ]
+      }
+    ]
   }
 ];
 
@@ -251,7 +363,7 @@ const pointCanvas = document.getElementById("grid-canvas");
 const ctx = pointCanvas.getContext("2d");
 
 const points = [];
-const spacing = 40;
+const spacing = 20;
 
 function generateGridPoints(width, height) {
   points.length = 0;
@@ -302,19 +414,60 @@ function projectSpriteToScreen(sprite) {
   };
 }
 
+
+
+function drawBoundaryOutline() {
+  const corners = [];
+
+  // Collect all sprite rectangle corners
+  sprites.forEach(sprite => {
+    const r = projectSpriteToScreen(sprite);
+    corners.push({ x: r.left, y: r.top });
+    corners.push({ x: r.right, y: r.top });
+    corners.push({ x: r.right, y: r.bottom });
+    corners.push({ x: r.left, y: r.bottom });
+  });
+
+  if (corners.length === 0) return;
+
+  // Convex hull (Andrew’s monotone chain)
+  corners.sort((a, b) => a.x === b.x ? a.y - b.y : a.x - b.x);
+
+  const cross = (o, a, b) => (a.x - o.x) * (b.y - o.y) - (a.y - o.y) * (b.x - o.x);
+
+  const lower = [];
+  for (const p of corners) {
+    while (lower.length >= 2 && cross(lower[lower.length - 2], lower[lower.length - 1], p) <= 0) lower.pop();
+    lower.push(p);
+  }
+
+  const upper = [];
+  for (let i = corners.length - 1; i >= 0; i--) {
+    const p = corners[i];
+    while (upper.length >= 2 && cross(upper[upper.length - 2], upper[upper.length - 1], p) <= 0) upper.pop();
+    upper.push(p);
+  }
+
+  const hull = lower.slice(0, -1).concat(upper.slice(0, -1));
+
+  // Draw outline
+  ctx.strokeStyle = "rgba(0,0,0,0.5)";
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  hull.forEach((p, i) => {
+    if (i === 0) ctx.moveTo(p.x, p.y);
+    else ctx.lineTo(p.x, p.y);
+  });
+  ctx.closePath();
+  ctx.stroke();
+}
+
+
 function drawPoints() {
   ctx.clearRect(0, 0, pointCanvas.width, pointCanvas.height);
 
-
   const spriteRects = sprites.map(projectSpriteToScreen);
 
-  // Find the closest sprite along the camera forward direction
-  let closestSpriteRect = null;
-  let minCameraDistance = Infinity;
-
-
-
-  // draw points
   ctx.fillStyle = "rgba(0,0,0,0.2)";
   const radius = 2;
   const offset = 100;
@@ -330,7 +483,6 @@ function drawPoints() {
     }
   });
 }
-
 window.addEventListener("resize", resizeCanvas);
 resizeCanvas();
 
@@ -397,6 +549,143 @@ function drawSpriteName(dominantSprite) {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// --------------------------
+// Portfolio Page
+// --------------------------
+
+
+// Image module
+function createImageModule(src, alt = "") {
+    const container = document.createElement("div");
+    container.classList.add("project-module", "module-image-left");
+    const img = document.createElement("img");
+    img.src = src;
+    img.alt = alt;
+    container.appendChild(img);
+    return container;
+}
+
+// Video module
+function createVideoModule(src) {
+    const container = document.createElement("div");
+    container.classList.add("project-module", "module-image-left");
+    const video = document.createElement("video");
+    video.src = src;
+    video.controls = true;
+    container.appendChild(video);
+    return container;
+}
+
+// Text module
+function createTextModule(text) {
+    const container = document.createElement("div");
+    container.classList.add("project-module", "module-text");
+    const p = document.createElement("p");
+    p.textContent = text;
+    container.appendChild(p);
+    return container;
+}
+
+// Grid module for multiple images
+function createImageGridModule(imageArray) {
+    const container = document.createElement("div");
+    container.classList.add("project-module", "module-grid");
+    imageArray.forEach(src => {
+        const img = document.createElement("img");
+        img.src = src;
+        container.appendChild(img);
+    });
+    return container;
+}
+
+// Image left, text right
+function createImageTextModule(imageSrc, textContent, imageAlt = "") {
+    const container = document.createElement("div");
+    container.classList.add("project-module", "module-image-text");
+
+    // Image container
+    const imgWrapper = document.createElement("div");
+    imgWrapper.classList.add("module-image");
+    const img = document.createElement("img");
+    img.src = imageSrc;
+    img.alt = imageAlt;
+    imgWrapper.appendChild(img);
+
+    // Text container
+    const textWrapper = document.createElement("div");
+    textWrapper.classList.add("module-text");
+    const p = document.createElement("p");
+    p.textContent = textContent;
+    textWrapper.appendChild(p);
+
+    // Append image and text
+    container.appendChild(imgWrapper);
+    container.appendChild(textWrapper);
+
+    return container;
+}
+
+
+
+
+
+
+const projectPanel = document.getElementById("project-panel");
+const projectContent = document.getElementById("project-content");
+const closeBtn = document.getElementById("close-project");
+
+function showProjectPanel(project) {
+    projectContent.innerHTML = ""; // clear old content
+
+    // Add title
+    const titleEl = document.createElement("h2");
+    titleEl.textContent = project.title;
+    projectContent.appendChild(titleEl);
+
+    // Iterate through modules in order
+    project.modules.forEach(module => {
+        let el;
+        switch(module.type) {
+            case "text":
+                el = createTextModule(module.content);
+                break;
+            case "image":
+                el = createImageModule(module.src, module.alt || "");
+                break;
+            case "video":
+                el = createVideoModule(module.src);
+                break;
+            case "image-grid":
+                el = createImageGridModule(module.images);
+                break;
+            case "image-text":
+                el = createImageTextModule(module.image, module.text, module.alt || "");
+                break;
+            default:
+                console.warn("Unknown module type:", module.type);
+        }
+        if (el) projectContent.appendChild(el);
+    });
+
+    // Slide in panel
+    projectPanel.classList.add("active");
+}
+
+closeBtn.addEventListener("click", () => { projectPanel.classList.remove("active"); });
 
 
 
@@ -524,7 +813,10 @@ function onClick() {
       const display = document.getElementById('project-display');
       display.innerHTML = `<h2>${project.title}</h2><p>${project.text}</p>`;
     }
+    
+    showProjectPanel(project);
   }
+  
 }
 
 
@@ -566,19 +858,21 @@ function onClick() {
 function animate() {
   requestAnimationFrame(animate);
   controls.update();
-  
 
-  // Instead of rotating the group manually:
+  // Enable auto-rotate when user is not interacting
   if (!userInteracting) {
-      controls.autoRotate = true;       // enable built-in auto-rotate
-      controls.autoRotateSpeed = 0.1;   // adjust speed
-      controls.update();                 // OrbitControls handles rotation + matrices
+      controls.autoRotate = true;
+      controls.autoRotateSpeed = 0.1;
+      controls.update();
   }
 
+  // Scale parameters
   const minScale = 0.1;
-  const maxScale = 2;
-  const revealThreshold = 1.3;
+  const maxScale = 1.3;
 
+  // Detect mobile (simple breakpoint or matchMedia)
+  const isMobile = window.innerWidth <= 768;  // or use a different breakpoint
+  const mobileScaleFactor = isMobile ? 0.6 : 1; // reduce scale on mobile
 
   let dominantSprite = null;
   let minDistance = Infinity;
@@ -587,12 +881,18 @@ function animate() {
     sprite.lookAt(camera.position);
 
     const distance = camera.position.distanceTo(sprite.position);
-    const scaleFactor = THREE.MathUtils.clamp(5 / distance, minScale, maxScale);
+    let scaleFactor = THREE.MathUtils.clamp(5 / distance, minScale, maxScale);
 
-    sprite.scale.set(sprite.originalScale.x * scaleFactor,
-                    sprite.originalScale.y * scaleFactor,
-                    1);
+    // Apply mobile scale adjustment
+    scaleFactor *= mobileScaleFactor;
 
+    sprite.scale.set(
+      sprite.originalScale.x * scaleFactor,
+      sprite.originalScale.y * scaleFactor,
+      1
+    );
+
+    // Determine dominant sprite
     const cameraSpacePos = sprite.position.clone().applyMatrix4(camera.matrixWorldInverse);
     const z = -cameraSpacePos.z; 
     if (z < minDistance) {
@@ -601,30 +901,25 @@ function animate() {
     }
   });
 
-
-  // --- set grayscale for all sprites except dominant ---
+  // Set grayscale for all sprites except dominant
   sprites.forEach(sprite => {
-    prepareGrayscale(sprite); // only precomputes once
+    prepareGrayscale(sprite);
 
     if (sprite === dominantSprite) {
-      sprite.material.map = sprite.userData.originalTexture; // full color
+      sprite.material.map = sprite.userData.originalTexture;
     } else {
-      sprite.material.map = sprite.userData.grayTexture;     // grayscale
+      sprite.material.map = sprite.userData.grayTexture;
     }
     sprite.material.needsUpdate = true;
   });
 
-  // --- render ---
   renderer.render(scene, camera);
-
-  // --- draw points / text ---
   drawPoints();
+  //drawBoundaryOutline();
+
   drawSpriteName(dominantSprite);
-
-
-
-
 }
+
 
 
 // --------------------------
@@ -656,4 +951,8 @@ threeCanvas.addEventListener('pointerup', (event) => {
     console.log("Click duration:", duration);
 
     onClick()
+    
 });
+
+
+
